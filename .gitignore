@@ -1,0 +1,12 @@
+# Ignore virtual environment folders
+venv/
+ai_project_env/
+video-audio-enhancement-61b6fb5e9a74.json
+.env 
+
+# Ignore Python cache files
+__pycache__/
+*.pyc 
+
+# Ignore credentials JSON file
+credentials/*.JSON

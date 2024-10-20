@@ -1,0 +1,10 @@
+ streamlit 
+ openai 
+ requests
+#  software development kits-sdk
+google-cloud-speech
+google-cloud-texttospeech
+pydub
+moviepy
+python-dotenv
+imageio[ffmpeg]
