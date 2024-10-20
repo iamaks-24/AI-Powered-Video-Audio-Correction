@@ -162,6 +162,10 @@ def adjust_audio_tempo(original_duration, corrected_audio_path, aligned_audio_pa
 
 
 def replace_audio_in_video(video_file_path, aligned_audio_file_path, output_video_file_path):
+    if not os.path.isfile(video_file_path):
+        raise FileNotFoundError(f"Video file not found: {video_file_path}")
+    if not os.path.isfile(aligned_audio_file_path):
+        raise FileNotFoundError(f"Audio file not found: {aligned_audio_file_path}")
     command = [
         "ffmpeg", "-i", video_file_path, "-i", aligned_audio_file_path,
         "-c:v", "copy", "-map", "0:v:0", "-map", "1:a:0",
