@@ -191,7 +191,8 @@ def main():
     if not check_ffmpeg_installed():
         st.error("FFmpeg is not installed or not found in your environment. Please install FFmpeg to use this application.")
         return  # Exit the main function if FFmpeg is not available
-    
+    else:
+        st.write("installed")
 
      # Azure openAI connection details
     azure_openai_key = "22ec84421ec24230a3638d1b51e3a7dc"
