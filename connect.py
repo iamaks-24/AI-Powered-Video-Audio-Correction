@@ -161,22 +161,43 @@ def adjust_audio_tempo(original_duration, corrected_audio_path, aligned_audio_pa
     st.success(f"Aligned audio saved to {aligned_audio_path}")
 
 
-def replace_audio_in_video(video_file_path, aligned_audio_file_path, output_video_file_path):
+# def replace_audio_in_video(video_file_path, aligned_audio_file_path, output_video_file_path):
+#     if not os.path.isfile(video_file_path):
+#         raise FileNotFoundError(f"Video file not found: {video_file_path}")
+#     if not os.path.isfile(aligned_audio_file_path):
+#         raise FileNotFoundError(f"Audio file not found: {aligned_audio_file_path}")
+#     command = [
+#         "ffmpeg", "-i", video_file_path, "-i", aligned_audio_file_path,
+#         "-c:v", "copy", "-map", "0:v:0", "-map", "1:a:0",
+#         output_video_file_path
+#     ]
+#     # subprocess.run(command, check=True)
+#     try:
+#         result = subprocess.run(command, check=True, capture_output=True, text=True)
+#     except subprocess.CalledProcessError as e:
+#         print(f"FFmpeg command failed with error:\n{e.stderr}")  # Log the error output
+#         raise  # Re-raise the exception for further handling
+#     st.success(f"New video with corrected audio saved to {output_video_file_path}")
+#     return output_video_file_path
+
+def replace_audio_in_video(video_file_path,aligned_audio_file_path,output_video_file_path):
+    # Check if input files exist
     if not os.path.isfile(video_file_path):
         raise FileNotFoundError(f"Video file not found: {video_file_path}")
     if not os.path.isfile(aligned_audio_file_path):
         raise FileNotFoundError(f"Audio file not found: {aligned_audio_file_path}")
-    command = [
-        "ffmpeg", "-i", video_file_path, "-i", aligned_audio_file_path,
-        "-c:v", "copy", "-map", "0:v:0", "-map", "1:a:0",
-        output_video_file_path
-    ]
-    # subprocess.run(command, check=True)
-    try:
-        result = subprocess.run(command, check=True, capture_output=True, text=True)
-    except subprocess.CalledProcessError as e:
-        print(f"FFmpeg command failed with error:\n{e.stderr}")  # Log the error output
-        raise  # Re-raise the exception for further handling
+
+    # Load the video and audio clips
+    video_clip = VideoFileClip(video_file_path)
+    audio_clip = AudioFileClip(aligned_audio_file_path)
+
+    # Set the new audio to the video
+    video_clip = video_clip.set_audio(audio_clip)
+
+    # Write the result to a file
+    video_clip.write_videofile(output_video_file_path, codec='libx264', audio_codec='aac')
+
+    # Success message
     st.success(f"New video with corrected audio saved to {output_video_file_path}")
     return output_video_file_path
 
@@ -200,8 +221,7 @@ def main():
     if not check_ffmpeg_installed():
         st.error("FFmpeg is not installed or not found in your environment. Please install FFmpeg to use this application.")
         return  # Exit the main function if FFmpeg is not available
-    else:
-        st.write("installed")
+  
 
      # Azure openAI connection details
     azure_openai_key = "22ec84421ec24230a3638d1b51e3a7dc"
@@ -247,7 +267,7 @@ def main():
                 if st.button("Replace Audio in Video"):
                     with st.spinner("Generating audio and replacing in video..."):
                         # Step 1: Generate corrected audio
-                        st.write("error")
+                      
                         generate_tts_audio(st.session_state.corrected_text, "corrected_audio.wav")
 
                         # Step 2: Get the original audio duration
