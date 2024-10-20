@@ -79,7 +79,19 @@ def transcribe_audio(file_path):
         return ""
 
 def generate_tts_audio(corrected_text, output_audio_path="corrected_audio.wav"):
-    client = texttospeech.TextToSpeechClient()
+    # Check if running on Render environment
+    if os.getenv("RENDER") or os.getenv("RENDER_EXTERNAL_HOSTNAME"):
+        # Load the JSON key from the environment variable
+        google_creds = json.loads(os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+        print("Running on Render. Using provided Google credentials.")
+        
+        # Create credentials using the JSON content
+        credentials = Credentials.from_service_account_info(google_creds)
+        client = texttospeech.TextToSpeechClient(credentials=credentials)
+    else:
+        print("Not running on Render. Using default Google credentials.")
+        client = texttospeech.TextToSpeechClient()  # Uses default application credentials
+
     
     voice = texttospeech.VoiceSelectionParams(
         language_code="en-US",
@@ -206,6 +218,7 @@ def main():
                 if st.button("Replace Audio in Video"):
                     with st.spinner("Generating audio and replacing in video..."):
                         # Step 1: Generate corrected audio
+                        st.write("error")
                         generate_tts_audio(st.session_state.corrected_text, "corrected_audio.wav")
 
                         # Step 2: Get the original audio duration
