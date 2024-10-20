@@ -171,8 +171,27 @@ def replace_audio_in_video(video_file_path, aligned_audio_file_path, output_vide
     st.success(f"New video with corrected audio saved to {output_video_file_path}")
     return output_video_file_path
 
+def check_ffmpeg_installed():
+    try:
+        # run command to get FFmpeg version
+        result=subprocess.run(['ffmpeg','-version'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+
+        # if the command was successful ,return True
+        if result.returncode==0:
+            return True
+        else:
+            return False
+    except FileNotFoundError:
+        return False
+
 def main():
     st.title("AI-Powered Video Audio Correction")
+
+    # Check if FFmpeg is installed
+    if not check_ffmpeg_installed():
+        st.error("FFmpeg is not installed or not found in your environment. Please install FFmpeg to use this application.")
+        return  # Exit the main function if FFmpeg is not available
+    
 
      # Azure openAI connection details
     azure_openai_key = "22ec84421ec24230a3638d1b51e3a7dc"
