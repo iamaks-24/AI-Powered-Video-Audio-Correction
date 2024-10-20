@@ -171,7 +171,12 @@ def replace_audio_in_video(video_file_path, aligned_audio_file_path, output_vide
         "-c:v", "copy", "-map", "0:v:0", "-map", "1:a:0",
         output_video_file_path
     ]
-    subprocess.run(command, check=True)
+    # subprocess.run(command, check=True)
+    try:
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"FFmpeg command failed with error:\n{e.stderr}")  # Log the error output
+        raise  # Re-raise the exception for further handling
     st.success(f"New video with corrected audio saved to {output_video_file_path}")
     return output_video_file_path
 
